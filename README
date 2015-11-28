@@ -1,0 +1,12 @@
+
+Trabalho da disciplina de Plataformas Distribuídas
+
+Um middleware orientado a mensagens do tipo ponto-a-ponto com um protocolo two-phase-commit
+
+
+Passos para a execução:
+1 - Iniciar o servidor de filas QueueServer.
+2 - Publicar mensagens com o Publisher.
+3 - Consumir mensagens com o Subscriber.
+
+
