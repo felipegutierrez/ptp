@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import infrastructure.ClientRequestHandler;
 
 public class QueueManagerProxy implements IQueueManager {
+
 	private String queueName = null;
 
 	public QueueManagerProxy(String queueName) {
@@ -13,7 +14,7 @@ public class QueueManagerProxy implements IQueueManager {
 	}
 
 	@Override
-	public void send(String m) throws IOException, InterruptedException {
+	public void send(String m, Boolean transactional) throws IOException, InterruptedException {
 		// configure
 		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313, false);
 		Marshaller marshaller = new Marshaller();
@@ -21,7 +22,7 @@ public class QueueManagerProxy implements IQueueManager {
 		Message message = new Message();
 
 		// configure message
-		message.setHeader(new MessageHeader(this.queueName));
+		message.setHeader(new MessageHeader(this.queueName, transactional));
 		message.setBody(new MessageBody(m));
 
 		// configure packet
@@ -40,7 +41,7 @@ public class QueueManagerProxy implements IQueueManager {
 	}
 
 	@Override
-	public String receive() throws IOException, InterruptedException, ClassNotFoundException {
+	public String receive(Boolean transactional) throws IOException, InterruptedException, ClassNotFoundException {
 		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313, true);
 		Marshaller marshaller = new Marshaller();
 		RequestPacket requestPacket = new RequestPacket();
@@ -49,7 +50,7 @@ public class QueueManagerProxy implements IQueueManager {
 		Message message = new Message();
 
 		// configure message
-		message.setHeader(new MessageHeader(this.queueName));
+		message.setHeader(new MessageHeader(this.queueName, transactional));
 		message.setBody(new MessageBody("messageBody"));
 
 		// configure packet

@@ -11,9 +11,9 @@ public class Publisher {
 		queueManagerProxy = new QueueManagerProxy(queueName);
 	}
 
-	public void send(String message) {
+	public void send(String message,Boolean transactional) {
 		try {
-			queueManagerProxy.send(message);
+			queueManagerProxy.send(message, transactional);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -23,6 +23,6 @@ public class Publisher {
 
 	public static void main(String[] args) {
 		Publisher publisher = new Publisher("queue");
-		publisher.send("message-01");
+		publisher.send("message-01", true);
 	}
 }

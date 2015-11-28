@@ -3,6 +3,8 @@ Trabalho da disciplina de Plataformas Distribuídas
 
 Um middleware orientado a mensagens do tipo ponto-a-ponto com um protocolo two-phase-commit
 
+Felipe Oliveira Gutierrez - felipe.o.gutierrez@gmail.com
+José Fernando Fish - gentio@gmail.com
 
 Passos para a execução:
 1 - Iniciar o servidor de filas QueueServer.

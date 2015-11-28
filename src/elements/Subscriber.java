@@ -12,10 +12,10 @@ public class Subscriber {
 		queueManagerProxy = new QueueManagerProxy(queueName);
 	}
 
-	public void start() {
+	public void receive(Boolean transactional) {
 		String receive = null;
 		try {
-			receive = queueManagerProxy.receive();
+			receive = queueManagerProxy.receive(transactional);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -31,6 +31,6 @@ public class Subscriber {
 
 	public static void main(String[] args) {
 		Subscriber subscriber = new Subscriber("queue");
-		subscriber.start();
+		subscriber.receive(true);
 	}
 }

@@ -9,8 +9,11 @@ import java.util.Map;
 import infrastructure.ServerRequestHandler;
 
 public class QueueManager {
+
 	private String host;
+
 	private int port;
+
 	Map<String, Queue> queues = new HashMap<String, Queue>();
 
 	public QueueManager(int port) throws UnknownHostException {
@@ -51,7 +54,20 @@ public class QueueManager {
 			case "receive":
 				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
 				if (queues.containsKey(queueName) && queues.get(queueName).queueSize() > 0) {
-					replyPacketUnmarshalled.setReply(queues.get(queueName).dequeue().getBody().getBody());
+
+					// verifica se é transacional
+					Message messageReceived = queues.get(queueName).getMessage();
+					if (messageReceived.getHead().getTransactional()) {
+
+						// analisa o header para verificar se pode realizar o
+						// dequeue
+
+						// realiza o dequeue
+						String body = queues.get(queueName).dequeue().getBody().getBody();
+
+						replyPacketUnmarshalled.setReply(body);
+					}
+
 				} else {
 					replyPacketUnmarshalled.setReply("");
 				}
