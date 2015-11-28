@@ -7,7 +7,7 @@ public class MessageBody implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public MessageBody(String body){
+	public MessageBody(String body) {
 		this.setBody(body);
 	}
 
@@ -19,4 +19,8 @@ public class MessageBody implements Serializable {
 		this.body = body;
 	}
 
+	@Override
+	public String toString() {
+		return this.body;
+	}
 }

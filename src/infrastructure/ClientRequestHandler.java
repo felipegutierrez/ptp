@@ -44,8 +44,7 @@ public class ClientRequestHandler {
 		return;
 	}
 
-	public byte[] receive() throws IOException, InterruptedException,
-			ClassNotFoundException {
+	public byte[] receive() throws IOException, InterruptedException, ClassNotFoundException {
 
 		byte[] msg = null;
 

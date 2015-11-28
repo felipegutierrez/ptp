@@ -1,12 +1,12 @@
 package distribution;
 
-import infrastructure.ServerRequestHandler;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+
+import infrastructure.ServerRequestHandler;
 
 public class QueueManager {
 	private String host;
@@ -31,18 +31,14 @@ public class QueueManager {
 		while (true) {
 
 			requestPacketUnmarshalled = srh.receive();
-			requestPacketMarshalled = (RequestPacket) marshaller
-					.unmarshall(requestPacketUnmarshalled);
+			requestPacketMarshalled = (RequestPacket) marshaller.unmarshall(requestPacketUnmarshalled);
 
-			switch (requestPacketMarshalled.getPacketHeader().getOperation()
-					.trim()) {
+			switch (requestPacketMarshalled.getPacketHeader().getOperation().trim()) {
 
 			// put something in a queue
 			case "send":
-				queueName = new String(requestPacketMarshalled.getPacketBody()
-						.getMessage().getHead().getDestination());
-				Message message = requestPacketMarshalled.getPacketBody()
-						.getMessage();
+				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
+				Message message = requestPacketMarshalled.getPacketBody().getMessage();
 				if (queues.containsKey(queueName)) {
 					queues.get(queueName).enqueue(message);
 				} else {
@@ -53,17 +49,14 @@ public class QueueManager {
 
 			// remove a message from a queue
 			case "receive":
-				queueName = new String(requestPacketMarshalled.getPacketBody()
-						.getMessage().getHead().getDestination());
-				if (!queues.containsKey(queueName)
-						&& queues.get(queueName).queueSize() != 0) {
-					replyPacketUnmarshalled.setReply(queues.get(queueName)
-							.dequeue().getBody().getBody());
-				} else
+				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
+				if (queues.containsKey(queueName) && queues.get(queueName).queueSize() > 0) {
+					replyPacketUnmarshalled.setReply(queues.get(queueName).dequeue().getBody().getBody());
+				} else {
 					replyPacketUnmarshalled.setReply("");
+				}
 
-				replyPacketMarshalled = marshaller
-						.marshall((Object) replyPacketUnmarshalled); // TODO
+				replyPacketMarshalled = marshaller.marshall((Object) replyPacketUnmarshalled); // TODO
 				srh.send(replyPacketMarshalled);
 				break;
 			}

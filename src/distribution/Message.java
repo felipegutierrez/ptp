@@ -11,13 +11,21 @@ public class Message implements Serializable {
 	public MessageHeader getHead() {
 		return header;
 	}
+
 	public void setHeader(MessageHeader header) {
 		this.header = header;
 	}
+
 	public MessageBody getBody() {
 		return body;
 	}
+
 	public void setBody(MessageBody body) {
 		this.body = body;
+	}
+
+	@Override
+	public String toString() {
+		return this.header.toString() + " - " + this.body.toString();
 	}
 }

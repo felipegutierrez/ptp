@@ -9,7 +9,7 @@ import java.net.Socket;
 public class ServerRequestHandler {
 	private int port;
 	private ServerSocket welcomeSocket = null;
-	
+
 	Socket connectionSocket = null;
 
 	int sentMessageSize;
@@ -22,25 +22,25 @@ public class ServerRequestHandler {
 		this.welcomeSocket = new ServerSocket(this.port);
 	}
 
-	public byte [] receive() throws IOException, Throwable {
+	public byte[] receive() throws IOException, Throwable {
 
-		byte [] rcvMsg = null;
-		
+		byte[] rcvMsg = null;
+
 		connectionSocket = welcomeSocket.accept();
-		
+
 		outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 		inFromClient = new DataInputStream(connectionSocket.getInputStream());
 
 		receivedMessageSize = inFromClient.readInt();
 		rcvMsg = new byte[receivedMessageSize];
-		
+
 		inFromClient.read(rcvMsg, 0, receivedMessageSize);
-		
+
 		return rcvMsg;
 	}
 
-	public void send(byte [] msg) throws IOException, InterruptedException {
-		
+	public void send(byte[] msg) throws IOException, InterruptedException {
+
 		sentMessageSize = msg.length;
 		outToClient.writeInt(sentMessageSize);
 		outToClient.write(msg);

@@ -1,0 +1,8 @@
+
+git init
+git remote add origin https://github.com/[username]/[reponame].git
+git add .   # this adds all the files
+git commit -a -m "Initial commit" # this stages your files locally for commit.
+git push -u origin --all
+
+

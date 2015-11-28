@@ -3,7 +3,7 @@ package distribution;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import infrastructure.*;
+import infrastructure.ClientRequestHandler;
 
 public class QueueManagerProxy implements IQueueManager {
 	private String queueName = null;
@@ -15,8 +15,7 @@ public class QueueManagerProxy implements IQueueManager {
 	@Override
 	public void send(String m) throws IOException, InterruptedException {
 		// configure
-		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313,
-				false);
+		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313, false);
 		Marshaller marshaller = new Marshaller();
 		RequestPacket packet = new RequestPacket();
 		Message message = new Message();
@@ -41,10 +40,8 @@ public class QueueManagerProxy implements IQueueManager {
 	}
 
 	@Override
-	public String receive() throws IOException, InterruptedException,
-			ClassNotFoundException {
-		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313,
-				true);
+	public String receive() throws IOException, InterruptedException, ClassNotFoundException {
+		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313, true);
 		Marshaller marshaller = new Marshaller();
 		RequestPacket requestPacket = new RequestPacket();
 		ReplyPacket marshalledReplyPacket = new ReplyPacket();
@@ -68,8 +65,7 @@ public class QueueManagerProxy implements IQueueManager {
 
 		// receive reply
 		unmarshalledReplyPacket = crh.receive();
-		marshalledReplyPacket = (ReplyPacket) marshaller
-				.unmarshall(unmarshalledReplyPacket);
+		marshalledReplyPacket = (ReplyPacket) marshaller.unmarshall(unmarshalledReplyPacket);
 
 		return marshalledReplyPacket.getReply(); // TODO
 	}
