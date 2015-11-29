@@ -19,16 +19,8 @@ public class MessageHeader implements Serializable {
 		return destination;
 	}
 
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
-
-	public Boolean getTransactional() {
+	public Boolean isTransactional() {
 		return transactional;
-	}
-
-	public void setTransactional(Boolean transactional) {
-		this.transactional = transactional;
 	}
 
 	@Override

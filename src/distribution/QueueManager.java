@@ -14,11 +14,14 @@ public class QueueManager {
 
 	private int port;
 
-	Map<String, Queue> queues = new HashMap<String, Queue>();
+	private Map<String, Queue> queues = new HashMap<String, Queue>();
+
+	private TransactionManager transactionManager;
 
 	public QueueManager(int port) throws UnknownHostException {
 		this.setHost(InetAddress.getLocalHost().getHostName());
 		this.setPort(port);
+		this.transactionManager = new TransactionManager();
 	}
 
 	public void run() throws IOException, Throwable {
@@ -57,15 +60,43 @@ public class QueueManager {
 
 					// verifica se é transacional
 					Message messageReceived = queues.get(queueName).getMessage();
-					if (messageReceived.getHead().getTransactional()) {
+					if (messageReceived.getHead().isTransactional()) {
+
+						Integer transactionKey = transactionManager.createNewTransaction();
+						Transaction transaction = transactionManager.getTransaction(transactionKey);
 
 						// analisa o header para verificar se pode realizar o
 						// dequeue
 
-						// realiza o dequeue
-						String body = queues.get(queueName).dequeue().getBody().getBody();
+						Boolean startTransaction = transactionManager.startTransaction(transactionKey);
+						if (startTransaction) {
+							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey);
+							if (voteRequestForAll) {
+								// TODO: se recebeu VOTE_COMMIT_ALL escreve
+								// GLOBAL_COMMIT
+								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey);
+								if (globalCommitForAll) {
 
-						replyPacketUnmarshalled.setReply(body);
+									// realiza o dequeue pois a transação foi
+									// completada com sucesso
+									String body = queues.get(queueName).dequeue().getBody().getBody();
+									replyPacketUnmarshalled.setReply(body);
+								} else {
+									// não consegui comitar para algum dos
+									// participantes
+									replyPacketUnmarshalled
+											.setReply("erro no globalCommitForAll da transação " + transaction);
+								}
+							} else {
+								// não conseguiu fazer o request para algum dos
+								// participantes
+								replyPacketUnmarshalled
+										.setReply("erro no voteRequestForAll da transação " + transaction);
+							}
+						} else {
+							// não conseguiu iniciar a transação
+							replyPacketUnmarshalled.setReply("erro no start da transação " + transaction);
+						}
 					}
 
 				} else {
