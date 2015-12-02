@@ -27,11 +27,15 @@ public class ResourceManager {
 		return this.resources.get(key);
 	}
 
-	public Integer createNewResource() {
+	public Boolean createNewResource(MessageResource messageResource) {
+		if (!messageResource.getFile().exists()) {
+			System.out.println("O arquivo [" + messageResource.getFile().getAbsolutePath() + "] não existe!");
+			return false;
+		}
 		Integer key = getNewResourceKey();
-		Resource resource = new Resource(key);
+		Resource resource = new Resource(key, messageResource);
 		this.resources.put(key, resource);
-		return key;
+		return true;
 	}
 
 	private Integer getNewResourceKey() {

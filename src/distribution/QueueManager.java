@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import infrastructure.ServerRequestHandler;
@@ -64,17 +65,21 @@ public class QueueManager {
 
 						Integer transactionKey = transactionManager.createNewTransaction();
 						Transaction transaction = transactionManager.getTransaction(transactionKey);
+						List<MessageResource> messageResources = messageReceived.getBody().getMessageResources();
 
 						// analisa o header para verificar se pode realizar o
 						// dequeue
 
-						Boolean startTransaction = transactionManager.startTransaction(transactionKey);
+						Boolean startTransaction = transactionManager.startTransaction(transactionKey, messageResources);
 						if (startTransaction) {
-							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey);
+
+							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey,
+									messageResources);
 							if (voteRequestForAll) {
 								// TODO: se recebeu VOTE_COMMIT_ALL escreve
 								// GLOBAL_COMMIT
-								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey);
+								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey,
+										messageResources);
 								if (globalCommitForAll) {
 
 									// realiza o dequeue pois a transação foi
@@ -97,8 +102,11 @@ public class QueueManager {
 							// não conseguiu iniciar a transação
 							replyPacketUnmarshalled.setReply("erro no start da transação " + transaction);
 						}
+					} else {
+						// a mensagem não é transacional
+						String body = queues.get(queueName).dequeue().getBody().getBody();
+						replyPacketUnmarshalled.setReply(body);
 					}
-
 				} else {
 					replyPacketUnmarshalled.setReply("");
 				}

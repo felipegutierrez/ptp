@@ -1,6 +1,7 @@
 package distribution;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,24 +40,24 @@ public class TransactionManager {
 		return newKey;
 	}
 
-	public Boolean startTransaction(Integer key) {
+	public Boolean startTransaction(Integer key, List<MessageResource> messageFiles) {
 		Transaction transaction = this.getTransaction(key);
-		transaction.startTransaction();
-		return true;
+		Boolean startTransaction = transaction.startTransaction(messageFiles);
+		return startTransaction;
 	}
 
-	public Boolean voteRequestForAll(Integer key) {
+	public Boolean voteRequestForAll(Integer key, List<MessageResource> messageResources) {
 		Transaction transaction = this.getTransaction(key);
 		if (transaction.getTransactionState().isStart2PC()) {
-			transaction.voteRequestForAll();
-			return true;
+			Boolean voteRequestForAll = transaction.voteRequestForAll(messageResources);
+			return voteRequestForAll;
 		} else {
 			// TODO: a transação não foi iniciada!
 			return false;
 		}
 	}
 
-	public Boolean globalCommitForAll(Integer key) {
+	public Boolean globalCommitForAll(Integer key, List<MessageResource> messageFiles) {
 
 		Transaction transaction = this.getTransaction(key);
 		if (transaction.getTransactionState().isVoteCommitAll()) {

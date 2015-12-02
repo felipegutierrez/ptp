@@ -2,6 +2,7 @@ package distribution;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import infrastructure.ClientRequestHandler;
 
@@ -14,7 +15,8 @@ public class QueueManagerProxy implements IQueueManager {
 	}
 
 	@Override
-	public void send(String m, Boolean transactional) throws IOException, InterruptedException {
+	public void send(String m, List<MessageResource> messageFiles, Boolean transactional)
+			throws IOException, InterruptedException {
 		// configure
 		ClientRequestHandler crh = new ClientRequestHandler("localhost", 1313, false);
 		Marshaller marshaller = new Marshaller();
@@ -24,6 +26,9 @@ public class QueueManagerProxy implements IQueueManager {
 		// configure message
 		message.setHeader(new MessageHeader(this.queueName, transactional));
 		message.setBody(new MessageBody(m));
+		for (MessageResource messageFile : messageFiles) {
+			message.getBody().addMessageResources(messageFile);
+		}
 
 		// configure packet
 		RequestPacketBody packetBody = new RequestPacketBody();

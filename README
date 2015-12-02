@@ -12,3 +12,14 @@ Passos para a execução:
 3 - Consumir mensagens com o Subscriber.
 
 
+Passos para testar o Two-Phase-Commit
+1 - Crie os três arquivos e para o teste11.txt retire todas as permissões de leitura e escrita. Assim poderemos verificar que um dos recursos irá estar indisponível e a transação Two-Phase-Commit não irá proceder
+# touch /home/felipe/Temp/teste00.txt /home/felipe/Temp/teste11.txt /home/felipe/Temp/teste22.txt
+# chmod 000 /home/felipe/Temp/teste11.txt
+
+2 - Exclua um dos arquivos teste*.txt. Assim poderemos verificar que um dos recursos irá estar indisponível e a transação Two-Phase-Commit não irá proceder
+# rm -Rf /home/felipe/Temp/teste11.txt
+
+3 - Recrie o arquivo excluído e assim será possível testar a transação ser completada até o final.
+# touch /home/felipe/Temp/teste11.txt
+
