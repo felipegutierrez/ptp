@@ -41,7 +41,7 @@ public class Transaction {
 	protected Boolean startTransaction(List<MessageResource> messageResources) {
 		boolean flag = true;
 
-		// TODO tem que criar a quantidade de recursos necessários para esta
+		// tem que criar a quantidade de recursos necessários para esta
 		// transação
 		for (MessageResource messageResource : messageResources) {
 			if (this.resourceManager.createNewResource(messageResource)) {
@@ -108,7 +108,7 @@ public class Transaction {
 	protected Boolean globalCommitForAll(List<MessageResource> messageResources) {
 
 		boolean flag = true;
-		// TODO: multicast vote_commit para todos os participantes
+		// multicast vote_commit para todos os participantes
 
 		for (MessageResource messageResource : messageResources) {
 
@@ -119,12 +119,20 @@ public class Transaction {
 			case READ_AND_WRITE:
 				PrintWriter pw = null;
 				try {
-					File file = messageResource.getFile();
-					FileWriter fw = new FileWriter(file, true);
-					pw = new PrintWriter(fw);
-					pw.println(messageResource.getValue());
-					this.resourceManager.setVoteCommit(messageResource);
+					if (messageResource.isFaultInject()) {
+						System.out.println("Fault Inject TRUE for " + messageResource);
+						throw new Exception();
+					} else {
+						File file = messageResource.getFile();
+						FileWriter fw = new FileWriter(file, true);
+						pw = new PrintWriter(fw);
+						pw.println(messageResource.getValue());
+						this.resourceManager.setVoteCommit(messageResource);
+					}
 				} catch (IOException e) {
+					e.printStackTrace();
+					flag = false;
+				} catch (Exception e) {
 					e.printStackTrace();
 					flag = false;
 				} finally {
@@ -181,6 +189,9 @@ public class Transaction {
 								.collect(Collectors.toList());
 						FileUtils.writeLines(file, updatedLines, false);
 					} catch (IOException e) {
+						e.printStackTrace();
+						flag = false;
+					} catch (Exception e) {
 						e.printStackTrace();
 						flag = false;
 					}

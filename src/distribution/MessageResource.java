@@ -8,7 +8,7 @@ public class MessageResource implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer idResource;
-	
+
 	private File file;
 
 	private ResourcePermissions resourceAction;
@@ -17,11 +17,22 @@ public class MessageResource implements Serializable {
 
 	private String value;
 
+	private Boolean faultInject;
+
 	public MessageResource(File file, String value, ResourcePermissions resourceAction) {
 		this.file = file;
 		this.value = value;
 		this.resourceAction = resourceAction;
 		this.resourcePermissions = ResourcePermissions.NOTHING;
+		this.faultInject = false;
+	}
+
+	public MessageResource(File file, String value, ResourcePermissions resourceAction, Boolean faultInject) {
+		this.file = file;
+		this.value = value;
+		this.resourceAction = resourceAction;
+		this.resourcePermissions = ResourcePermissions.NOTHING;
+		this.faultInject = faultInject;
 	}
 
 	public File getFile() {
@@ -68,5 +79,13 @@ public class MessageResource implements Serializable {
 
 	public void setIdResource(Integer idResource) {
 		this.idResource = idResource;
+	}
+
+	public Boolean isFaultInject() {
+		return faultInject;
+	}
+
+	public void setFaultInject(Boolean faultInject) {
+		this.faultInject = faultInject;
 	}
 }

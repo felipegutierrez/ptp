@@ -30,18 +30,18 @@ public class Publisher {
 	public static void main(String[] args) {
 
 		Publisher publisher = new Publisher("queue");
-		List<MessageResource> messageFiles = new ArrayList<MessageResource>();
+		List<MessageResource> messageResources = new ArrayList<MessageResource>();
 
 		MessageResource messageFile = new MessageResource(new File("/home/felipe/Temp/teste00.txt"),
 				"escrevendo 000000", ResourcePermissions.READ_AND_WRITE);
-		messageFiles.add(messageFile);
+		messageResources.add(messageFile);
 		messageFile = new MessageResource(new File("/home/felipe/Temp/teste11.txt"), "escrevendo 111111",
-				ResourcePermissions.READ_AND_WRITE);
-		messageFiles.add(messageFile);
+				ResourcePermissions.READ_AND_WRITE, true);
+		messageResources.add(messageFile);
 		messageFile = new MessageResource(new File("/home/felipe/Temp/teste22.txt"), "escrevendo 222222",
 				ResourcePermissions.READ_AND_WRITE);
-		messageFiles.add(messageFile);
+		messageResources.add(messageFile);
 
-		publisher.send("message-01", messageFiles, true);
+		publisher.send("message-01", messageResources, true);
 	}
 }

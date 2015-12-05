@@ -52,7 +52,7 @@ public class TransactionManager {
 			Boolean voteRequestForAll = transaction.voteRequestForAll(messageResources);
 			return voteRequestForAll;
 		} else {
-			// TODO: a transação não foi iniciada!
+			// a transação não foi iniciada!
 			return false;
 		}
 	}
@@ -65,7 +65,7 @@ public class TransactionManager {
 			Boolean voteCommitForAll = transaction.globalCommitForAll(messageResources);
 			return voteCommitForAll;
 		} else {
-			// TODO: a transação não retornou VOTE_COMMIT_ALL
+			// a transação não retornou VOTE_COMMIT_ALL
 			return false;
 		}
 	}

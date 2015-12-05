@@ -77,7 +77,7 @@ public class QueueManager {
 							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey,
 									messageResources);
 							if (voteRequestForAll) {
-								// TODO: se recebeu VOTE_COMMIT_ALL escreve
+								// se recebeu VOTE_COMMIT_ALL escreve
 								// GLOBAL_COMMIT
 								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey,
 										messageResources);
