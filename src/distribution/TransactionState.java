@@ -16,11 +16,14 @@ public class TransactionState {
 	// realizado
 	private Boolean globalAbortAll;
 
+	private Boolean globalAbortOK;
+
 	public TransactionState() {
 		this.setStart2PC(false);
 		this.setVoteRequestAll(false);
 		this.setGlobalAbortAll(false);
 		this.setVoteCommitAll(false);
+		this.setGlobalAbortOK(false);
 	}
 
 	public Boolean isStart2PC() {
@@ -59,5 +62,13 @@ public class TransactionState {
 	public String toString() {
 		return "[TransactionState start2PC=" + this.start2PC + " - voteRequestAll=" + this.voteRequestAll
 				+ " - globalAbortAll=" + this.globalAbortAll + " - voteCommitAll=" + this.voteCommitAll + "]";
+	}
+
+	public Boolean isGlobalAbortOK() {
+		return globalAbortOK;
+	}
+
+	public void setGlobalAbortOK(Boolean globalAbortOK) {
+		this.globalAbortOK = globalAbortOK;
 	}
 }

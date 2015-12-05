@@ -40,14 +40,14 @@ public class ResourceManager {
 	}
 
 	private Integer getNewResourceKey() {
-		Integer lastKey = 0;
+		Integer lastKey = -1;
 		Set<Integer> keySet = this.getResources().keySet();
 		for (Integer key : keySet) {
 			if (key > lastKey) {
 				lastKey = key;
 			}
 		}
-		Integer newKey = lastKey++;
+		Integer newKey = lastKey + 1;
 		return newKey;
 	}
 
@@ -66,5 +66,9 @@ public class ResourceManager {
 
 	public void setVoteCommit(MessageResource messageResource) {
 		this.resources.get(messageResource.getIdResource()).getResourceState().setVoteCommit(true);
+	}
+
+	public Boolean isVoteCommit(MessageResource messageResource) {
+		return this.resources.get(messageResource.getIdResource()).getResourceState().isVoteCommit();
 	}
 }

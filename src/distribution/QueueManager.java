@@ -70,7 +70,8 @@ public class QueueManager {
 						// analisa o header para verificar se pode realizar o
 						// dequeue
 
-						Boolean startTransaction = transactionManager.startTransaction(transactionKey, messageResources);
+						Boolean startTransaction = transactionManager.startTransaction(transactionKey,
+								messageResources);
 						if (startTransaction) {
 
 							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey,
@@ -89,6 +90,8 @@ public class QueueManager {
 								} else {
 									// não consegui comitar para algum dos
 									// participantes
+									Boolean globalRollBackForAll = transactionManager
+											.globalRollBackForAll(transactionKey, messageResources);
 									replyPacketUnmarshalled
 											.setReply("erro no globalCommitForAll da transação " + transaction);
 								}

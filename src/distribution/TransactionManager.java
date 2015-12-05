@@ -29,14 +29,14 @@ public class TransactionManager {
 	}
 
 	private Integer getNewTransactionKey() {
-		Integer lastKey = 0;
+		Integer lastKey = -1;
 		Set<Integer> keySet = this.getTransactions().keySet();
 		for (Integer key : keySet) {
 			if (key > lastKey) {
 				lastKey = key;
 			}
 		}
-		Integer newKey = lastKey++;
+		Integer newKey = lastKey + 1;
 		return newKey;
 	}
 
@@ -66,6 +66,18 @@ public class TransactionManager {
 			return voteCommitForAll;
 		} else {
 			// TODO: a transação não retornou VOTE_COMMIT_ALL
+			return false;
+		}
+	}
+
+	public Boolean globalRollBackForAll(Integer key, List<MessageResource> messageResources) {
+
+		Transaction transaction = this.getTransaction(key);
+
+		if (transaction.getTransactionState().isStart2PC() && transaction.getTransactionState().isVoteRequestAll()) {
+			Boolean voteRollBackForAll = transaction.globalRollBackForAll(messageResources);
+			return voteRollBackForAll;
+		} else {
 			return false;
 		}
 	}

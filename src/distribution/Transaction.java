@@ -5,6 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * Uma transação tem seu estado TransactionState e apenas um ResourceManager que
@@ -154,6 +157,59 @@ public class Transaction {
 			this.transactionState.setVoteCommitAll(true);
 		} else {
 			this.transactionState.setGlobalAbortAll(true);
+		}
+		return flag;
+	}
+
+	protected Boolean globalRollBackForAll(List<MessageResource> messageResources) {
+
+		boolean flag = true;
+		// TODO: multicast vote_commit para todos os participantes
+
+		for (MessageResource messageResource : messageResources) {
+
+			if (this.resourceManager.isVoteCommit(messageResource)) {
+				switch (messageResource.getResourceAction()) {
+				case READ_AND_WRITE_AND_EXECUTE:
+
+					break;
+				case READ_AND_WRITE:
+					File file = messageResource.getFile();
+					try {
+						List<String> lines = FileUtils.readLines(file);
+						List<String> updatedLines = lines.stream().filter(s -> !s.contains(messageResource.getValue()))
+								.collect(Collectors.toList());
+						FileUtils.writeLines(file, updatedLines, false);
+					} catch (IOException e) {
+						e.printStackTrace();
+						flag = false;
+					}
+					break;
+				case READ_AND_EXECUTE:
+					break;
+				case WRITE_AND_EXECUTE:
+					break;
+				case READ:
+					break;
+				case WRITE:
+					break;
+				case EXECUTE:
+					break;
+				default:
+					flag = false;
+				}
+			}
+		}
+
+		// TODO: se der timeout ou alguma coisa errado
+		// this.transactionState.setGlobalAbortAll(true);
+		// return;
+
+		// se tudo der certo
+		if (flag) {
+			this.transactionState.setGlobalAbortOK(true);
+		} else {
+			this.transactionState.setGlobalAbortOK(false);
 		}
 		return flag;
 	}

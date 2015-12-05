@@ -2,13 +2,16 @@ package distribution;
 
 public class ResourceState {
 
-	private Boolean start2PC;
+	private Boolean start2PC = false;
 
-	private Boolean voteResquest;
+	private Boolean voteResquest = false;
 
-	private Boolean voteCommit;
+	private Boolean voteCommit = false;
 
 	public ResourceState() {
+		this.start2PC = false;
+		this.voteResquest = false;
+		this.voteCommit = false;
 	}
 
 	public Boolean isVoteResquest() {
