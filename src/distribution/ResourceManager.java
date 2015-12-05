@@ -33,6 +33,7 @@ public class ResourceManager {
 			return false;
 		}
 		Integer key = getNewResourceKey();
+		messageResource.setIdResource(key);
 		Resource resource = new Resource(key, messageResource);
 		this.resources.put(key, resource);
 		return true;
@@ -48,5 +49,22 @@ public class ResourceManager {
 		}
 		Integer newKey = lastKey++;
 		return newKey;
+	}
+
+	public void setStart2PC(MessageResource messageResource) {
+		this.resources.get(messageResource.getIdResource()).getResourceState().setStart2PC(true);
+	}
+
+	public void setResourcePermission(MessageResource messageResource) {
+		this.resources.get(messageResource.getIdResource())
+				.setResourcePermissions(messageResource.getResourcePermissions());
+	}
+
+	public void setRequestVote(MessageResource messageResource) {
+		this.resources.get(messageResource.getIdResource()).getResourceState().setVoteResquest(true);
+	}
+
+	public void setVoteCommit(MessageResource messageResource) {
+		this.resources.get(messageResource.getIdResource()).getResourceState().setVoteCommit(true);
 	}
 }

@@ -10,6 +10,7 @@ import distribution.QueueManagerProxy;
 import distribution.ResourcePermissions;
 
 public class Publisher {
+
 	QueueManagerProxy queueManagerProxy;
 
 	public Publisher(String queueName) {

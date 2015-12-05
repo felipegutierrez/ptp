@@ -2,18 +2,25 @@ package distribution;
 
 public class TransactionState {
 
+	// indica se iniciou a transação
 	private Boolean start2PC;
+
+	// indica se votou a requisição para todos os recursos da transação
 	private Boolean voteRequestAll;
-	private Boolean globalAbortAll;
+
+	// indica se realizou o commit para todos os recursos da transação
 	private Boolean voteCommitAll;
-	private Boolean globalCommitAll;
+
+	// indica se precisa abortar o voteRequest ou o voteCommit da transação.
+	// Dependendo de quais outras flags estiverem ativas o rollback será
+	// realizado
+	private Boolean globalAbortAll;
 
 	public TransactionState() {
 		this.setStart2PC(false);
 		this.setVoteRequestAll(false);
 		this.setGlobalAbortAll(false);
 		this.setVoteCommitAll(false);
-		this.setGlobalCommitAll(false);
 	}
 
 	public Boolean isStart2PC() {
@@ -48,18 +55,9 @@ public class TransactionState {
 		this.voteCommitAll = voteCommitAll;
 	}
 
-	public Boolean isGlobalCommitAll() {
-		return globalCommitAll;
-	}
-
-	protected void setGlobalCommitAll(Boolean globalCommitAll) {
-		this.globalCommitAll = globalCommitAll;
-	}
-
 	@Override
 	public String toString() {
 		return "[TransactionState start2PC=" + this.start2PC + " - voteRequestAll=" + this.voteRequestAll
-				+ " - globalAbortAll=" + this.globalAbortAll + " - voteCommitAll=" + this.voteCommitAll
-				+ " - globalCommitAll=" + this.globalCommitAll + "]";
+				+ " - globalAbortAll=" + this.globalAbortAll + " - voteCommitAll=" + this.voteCommitAll + "]";
 	}
 }

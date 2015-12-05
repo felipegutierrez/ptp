@@ -7,6 +7,8 @@ public class MessageResource implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private Integer idResource;
+	
 	private File file;
 
 	private ResourcePermissions resourceAction;
@@ -58,5 +60,13 @@ public class MessageResource implements Serializable {
 
 	public void setResourceAction(ResourcePermissions resourceAction) {
 		this.resourceAction = resourceAction;
+	}
+
+	public Integer getIdResource() {
+		return idResource;
+	}
+
+	public void setIdResource(Integer idResource) {
+		this.idResource = idResource;
 	}
 }

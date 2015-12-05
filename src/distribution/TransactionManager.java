@@ -40,9 +40,9 @@ public class TransactionManager {
 		return newKey;
 	}
 
-	public Boolean startTransaction(Integer key, List<MessageResource> messageFiles) {
+	public Boolean startTransaction(Integer key, List<MessageResource> messageResources) {
 		Transaction transaction = this.getTransaction(key);
-		Boolean startTransaction = transaction.startTransaction(messageFiles);
+		Boolean startTransaction = transaction.startTransaction(messageResources);
 		return startTransaction;
 	}
 
@@ -57,12 +57,13 @@ public class TransactionManager {
 		}
 	}
 
-	public Boolean globalCommitForAll(Integer key, List<MessageResource> messageFiles) {
+	public Boolean globalCommitForAll(Integer key, List<MessageResource> messageResources) {
 
 		Transaction transaction = this.getTransaction(key);
-		if (transaction.getTransactionState().isVoteCommitAll()) {
-			transaction.globalCommitForAll();
-			return true;
+
+		if (transaction.getTransactionState().isStart2PC() && transaction.getTransactionState().isVoteRequestAll()) {
+			Boolean voteCommitForAll = transaction.globalCommitForAll(messageResources);
+			return voteCommitForAll;
 		} else {
 			// TODO: a transação não retornou VOTE_COMMIT_ALL
 			return false;

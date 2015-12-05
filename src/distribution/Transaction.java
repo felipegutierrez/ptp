@@ -1,5 +1,9 @@
 package distribution;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -32,20 +36,29 @@ public class Transaction {
 	}
 
 	protected Boolean startTransaction(List<MessageResource> messageResources) {
-		this.transactionState.setStart2PC(true);
+		boolean flag = true;
 
 		// TODO tem que criar a quantidade de recursos necessários para esta
 		// transação
 		for (MessageResource messageResource : messageResources) {
-			if (!this.resourceManager.createNewResource(messageResource)) {
+			if (this.resourceManager.createNewResource(messageResource)) {
+				this.resourceManager.setStart2PC(messageResource);
+			} else {
 				// não conseguiu criar o resource
-				return false;
+				flag = false;
 			}
 		}
-		return true;
+		// se tudo der certo
+		if (flag) {
+			this.transactionState.setStart2PC(true);
+		} else {
+			this.transactionState.setGlobalAbortAll(true);
+		}
+		return flag;
 	}
 
 	protected Boolean voteRequestForAll(List<MessageResource> messageResources) {
+		boolean flag = true;
 		// multicast vote_request para todos os particpantes
 		for (MessageResource messageResource : messageResources) {
 			if (messageResource.getFile().canRead() && messageResource.getFile().canWrite()
@@ -74,23 +87,75 @@ public class Transaction {
 				System.out.println("A ação requisitada [" + messageResource.getResourceAction()
 						+ "] não é permitita para o recurso [" + messageResource + "]");
 				this.transactionState.setGlobalAbortAll(true);
-				return false;
+				flag = false;
+			} else {
+				this.resourceManager.setResourcePermission(messageResource);
+				this.resourceManager.setRequestVote(messageResource);
 			}
 		}
 		// se tudo der certo
-		this.transactionState.setVoteRequestAll(true);
-		return true;
+		if (flag) {
+			this.transactionState.setVoteRequestAll(true);
+		} else {
+			this.transactionState.setGlobalAbortAll(true);
+		}
+		return flag;
 	}
 
-	protected void globalCommitForAll() {
+	protected Boolean globalCommitForAll(List<MessageResource> messageResources) {
+
+		boolean flag = true;
 		// TODO: multicast vote_commit para todos os participantes
+
+		for (MessageResource messageResource : messageResources) {
+
+			switch (messageResource.getResourceAction()) {
+			case READ_AND_WRITE_AND_EXECUTE:
+
+				break;
+			case READ_AND_WRITE:
+				PrintWriter pw = null;
+				try {
+					File file = messageResource.getFile();
+					FileWriter fw = new FileWriter(file, true);
+					pw = new PrintWriter(fw);
+					pw.println(messageResource.getValue());
+					this.resourceManager.setVoteCommit(messageResource);
+				} catch (IOException e) {
+					e.printStackTrace();
+					flag = false;
+				} finally {
+					if (pw != null) {
+						pw.close();
+					}
+				}
+				break;
+			case READ_AND_EXECUTE:
+				break;
+			case WRITE_AND_EXECUTE:
+				break;
+			case READ:
+				break;
+			case WRITE:
+				break;
+			case EXECUTE:
+				break;
+			default:
+				flag = false;
+			}
+		}
 
 		// TODO: se der timeout ou alguma coisa errado
 		// this.transactionState.setGlobalAbortAll(true);
 		// return;
 
 		// se tudo der certo
-		this.transactionState.setGlobalCommitAll(true);
+		if (flag) {
+			this.transactionState.setVoteCommitAll(true);
+		} else {
+			this.transactionState.setGlobalAbortAll(true);
+		}
+		return flag;
 	}
 
 	public String toString() {
