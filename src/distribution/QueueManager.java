@@ -67,39 +67,28 @@ public class QueueManager {
 						Transaction transaction = transactionManager.getTransaction(transactionKey);
 						List<MessageResource> messageResources = messageReceived.getBody().getMessageResources();
 
-						// analisa o header para verificar se pode realizar o
-						// dequeue
+						// analisa o header para verificar se pode realizar o dequeue
 
-						Boolean startTransaction = transactionManager.startTransaction(transactionKey,
-								messageResources);
+						Boolean startTransaction = transactionManager.startTransaction(transactionKey, messageResources);
 						if (startTransaction) {
 
-							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey,
-									messageResources);
+							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey, messageResources);
 							if (voteRequestForAll) {
-								// se recebeu VOTE_COMMIT_ALL escreve
-								// GLOBAL_COMMIT
-								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey,
-										messageResources);
+								// se recebeu VOTE_COMMIT_ALL escreve GLOBAL_COMMIT
+								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey, messageResources);
 								if (globalCommitForAll) {
 
-									// realiza o dequeue pois a transação foi
-									// completada com sucesso
+									// realiza o dequeue pois a transação foi completada com sucesso
 									String body = queues.get(queueName).dequeue().getBody().getBody();
 									replyPacketUnmarshalled.setReply(body);
 								} else {
-									// não consegui comitar para algum dos
-									// participantes
-									Boolean globalRollBackForAll = transactionManager
-											.globalRollBackForAll(transactionKey, messageResources);
-									replyPacketUnmarshalled
-											.setReply("erro no globalCommitForAll da transação " + transaction);
+									// não consegui comitar para algum dos participantes
+									Boolean globalRollBackForAll = transactionManager.globalRollBackForAll(transactionKey, messageResources);
+									replyPacketUnmarshalled.setReply("erro no globalCommitForAll da transação " + transaction);
 								}
 							} else {
-								// não conseguiu fazer o request para algum dos
-								// participantes
-								replyPacketUnmarshalled
-										.setReply("erro no voteRequestForAll da transação " + transaction);
+								// não conseguiu fazer o request para algum dos participantes
+								replyPacketUnmarshalled.setReply("erro no voteRequestForAll da transação " + transaction);
 							}
 						} else {
 							// não conseguiu iniciar a transação
