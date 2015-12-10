@@ -3,20 +3,20 @@ package distribution;
 import java.io.Serializable;
 
 public class RequestPacketHeader implements Serializable {
-	private String operation;
+
+	private Operation operation;
 
 	private static final long serialVersionUID = 1L;
-	
-	public RequestPacketHeader(String operation){
+
+	public RequestPacketHeader(Operation operation) {
 		this.operation = operation;
 	}
 
-	public String getOperation() {
+	public Operation getOperation() {
 		return operation;
 	}
 
-	public void setOperation(String operation) {
+	public void setOperation(Operation operation) {
 		this.operation = operation;
 	}
-
 }

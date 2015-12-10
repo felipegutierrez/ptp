@@ -7,13 +7,13 @@ public class ReplyPacket implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ReplyPacketHeader header;
 	private ReplyPacketBody body;
-	private String reply;
+	private Reply reply;
 
-	public String getReply() {
+	public Reply getReply() {
 		return reply;
 	}
 
-	public void setReply(String reply) {
+	public void setReply(Reply reply) {
 		this.reply = reply;
 	}
 

@@ -32,13 +32,13 @@ public class Publisher {
 		Publisher publisher = new Publisher("queue");
 		List<MessageResource> messageResources = new ArrayList<MessageResource>();
 
-		MessageResource messageFile = new MessageResource(new File("/home/felipe/Temp/teste00.txt"),
+		MessageResource messageFile = new MessageResource(new File("/home/felipe/Temp/2FC/teste00.txt"),
 				"escrevendo 000000", ResourcePermissions.READ_AND_WRITE);
 		messageResources.add(messageFile);
-		messageFile = new MessageResource(new File("/home/felipe/Temp/teste11.txt"), "escrevendo 111111",
+		messageFile = new MessageResource(new File("/home/felipe/Temp/2FC/teste11.txt"), "escrevendo 111111",
 				ResourcePermissions.READ_AND_WRITE);
 		messageResources.add(messageFile);
-		messageFile = new MessageResource(new File("/home/felipe/Temp/teste22.txt"), "escrevendo 222222",
+		messageFile = new MessageResource(new File("/home/felipe/Temp/2FC/teste22.txt"), "escrevendo 222222",
 				ResourcePermissions.READ_AND_WRITE);
 		messageResources.add(messageFile);
 

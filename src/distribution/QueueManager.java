@@ -16,12 +16,9 @@ public class QueueManager {
 
 	private Map<String, Queue> queues = new HashMap<String, Queue>();
 
-	private TransactionManager transactionManager;
-
 	public QueueManager(int port) throws UnknownHostException {
 		this.setHost(InetAddress.getLocalHost().getHostName());
 		this.setPort(port);
-		this.transactionManager = new TransactionManager();
 	}
 
 	public void run() throws IOException, Throwable {
@@ -39,10 +36,10 @@ public class QueueManager {
 			requestPacketUnmarshalled = srh.receive();
 			requestPacketMarshalled = (RequestPacket) marshaller.unmarshall(requestPacketUnmarshalled);
 
-			switch (requestPacketMarshalled.getPacketHeader().getOperation().trim()) {
+			switch (requestPacketMarshalled.getPacketHeader().getOperation()) {
 
 			// put something in a queue
-			case "send":
+			case SEND:
 				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
 				Message message = requestPacketMarshalled.getPacketBody().getMessage();
 				if (queues.containsKey(queueName)) {
@@ -53,8 +50,8 @@ public class QueueManager {
 				}
 				break;
 
-			// remove a message from a queue
-			case "receive":
+			// recebe a mensagem e só remove agora se não for transacional
+			case RECEIVE:
 				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
 				if (queues.containsKey(queueName) && queues.get(queueName).queueSize() > 0) {
 
@@ -64,15 +61,18 @@ public class QueueManager {
 
 						replyPacketUnmarshalled.setHeader(new ReplyPacketHeader("write", true));
 						replyPacketUnmarshalled.setBody(new ReplyPacketBody(null, messageReceived));
-						replyPacketUnmarshalled.setReply("executando");
+						replyPacketUnmarshalled.setReply(Reply.EXECUTING);
 
 					} else {
 						// a mensagem não é transacional
 						String body = queues.get(queueName).dequeue().getBody().getBody();
-						replyPacketUnmarshalled.setReply(body);
+
+						replyPacketUnmarshalled.setHeader(new ReplyPacketHeader("write", false));
+						replyPacketUnmarshalled.setBody(new ReplyPacketBody(null, messageReceived));
+						replyPacketUnmarshalled.setReply(Reply.EXECUTING);
 					}
 				} else {
-					replyPacketUnmarshalled.setReply("");
+					replyPacketUnmarshalled.setReply(Reply.ERROR);
 				}
 
 				replyPacketMarshalled = marshaller.marshall((Object) replyPacketUnmarshalled); // TODO
@@ -80,14 +80,21 @@ public class QueueManager {
 				break;
 
 			// tira da fila
-			case "dequeue":
+			case DEQUEUE:
 				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
 				if (queues.containsKey(queueName) && queues.get(queueName).queueSize() > 0) {
-					String body = queues.get(queueName).dequeue().getBody().getBody();
-					replyPacketUnmarshalled.setReply(body);
+
+					Message messageReceived = queues.get(queueName).dequeue();
+
+					replyPacketUnmarshalled.setHeader(new ReplyPacketHeader("write", false));
+					replyPacketUnmarshalled.setBody(new ReplyPacketBody(null, messageReceived));
+					replyPacketUnmarshalled.setReply(Reply.DEQUEUE);
 					replyPacketMarshalled = marshaller.marshall((Object) replyPacketUnmarshalled); // TODO
+
 					srh.send(replyPacketMarshalled);
 				}
+				break;
+			default:
 				break;
 			}
 		}

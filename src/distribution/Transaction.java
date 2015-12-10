@@ -130,10 +130,10 @@ public class Transaction {
 						this.resourceManager.setVoteCommit(messageResource);
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					// e.printStackTrace();
 					flag = false;
 				} catch (Exception e) {
-					e.printStackTrace();
+					// e.printStackTrace();
 					flag = false;
 				} finally {
 					if (pw != null) {
@@ -172,7 +172,6 @@ public class Transaction {
 	protected Boolean globalRollBackForAll(List<MessageResource> messageResources) {
 
 		boolean flag = true;
-		// TODO: multicast vote_commit para todos os participantes
 
 		for (MessageResource messageResource : messageResources) {
 
@@ -189,10 +188,10 @@ public class Transaction {
 								.collect(Collectors.toList());
 						FileUtils.writeLines(file, updatedLines, false);
 					} catch (IOException e) {
-						e.printStackTrace();
+						// e.printStackTrace();
 						flag = false;
 					} catch (Exception e) {
-						e.printStackTrace();
+						// e.printStackTrace();
 						flag = false;
 					}
 					break;

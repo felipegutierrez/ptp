@@ -39,7 +39,7 @@ public class QueueManagerProxy implements IQueueManager {
 
 		packetBody.setParameters(parameters);
 		packetBody.setMessage(message);
-		packet.setPacketHeader(new RequestPacketHeader("send"));
+		packet.setPacketHeader(new RequestPacketHeader(Operation.SEND));
 		packet.setPacketBody(packetBody);
 
 		// send request
@@ -66,7 +66,7 @@ public class QueueManagerProxy implements IQueueManager {
 		ArrayList<Object> parameters = new ArrayList<Object>(0);
 		packetBody.setParameters(parameters);
 		packetBody.setMessage(message);
-		requestPacket.setPacketHeader(new RequestPacketHeader("receive"));
+		requestPacket.setPacketHeader(new RequestPacketHeader(Operation.RECEIVE));
 		requestPacket.setPacketBody(packetBody);
 
 		// send request
@@ -93,25 +93,25 @@ public class QueueManagerProxy implements IQueueManager {
 					Boolean globalCommitForAll = transaction.globalCommitForAll(messageResources);
 					if (globalCommitForAll) {
 						// passou por todas as fases
-						requestPacket.getPacketHeader().setOperation("dequeue");
+						requestPacket.getPacketHeader().setOperation(Operation.DEQUEUE);
 						crh.send(marshaller.marshall((Object) requestPacket));
 						unmarshalledReplyPacket = crh.receive();
-						
-						marshalledReplyPacket.setReply("sucesso");
-					} else {
 
+						marshalledReplyPacket.setReply(Reply.SUCCESS_COMMIT);
+					} else {
+						Boolean globalRollBackForAll = transaction.globalRollBackForAll(messageResources);
+						marshalledReplyPacket.setReply(Reply.ERROR_COMMIT_RESOURCES);
 					}
 				} else {
-
+					marshalledReplyPacket.setReply(Reply.ERROR_REQUEST_RESOURCES);
 				}
 			} else {
-
+				marshalledReplyPacket.setReply(Reply.ERROR_START_TRANSACTION);
 			}
 		} else {
-
+			// não é transacional
 		}
-
-		return marshalledReplyPacket.getReply(); // TODO
+		return marshalledReplyPacket.getReply().toString(); // TODO
 	}
 
 	public String getQueueName() {
