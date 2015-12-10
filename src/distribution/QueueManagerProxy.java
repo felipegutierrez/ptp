@@ -10,8 +10,11 @@ public class QueueManagerProxy implements IQueueManager {
 
 	private String queueName = null;
 
+	private TransactionManager transactionManager;
+
 	public QueueManagerProxy(String queueName) {
 		this.setQueueName(queueName);
+		this.transactionManager = new TransactionManager();
 	}
 
 	@Override
@@ -72,6 +75,41 @@ public class QueueManagerProxy implements IQueueManager {
 		// receive reply
 		unmarshalledReplyPacket = crh.receive();
 		marshalledReplyPacket = (ReplyPacket) marshaller.unmarshall(unmarshalledReplyPacket);
+
+		ReplyPacketHeader header = marshalledReplyPacket.getHeader();
+		ReplyPacketBody body = marshalledReplyPacket.getBody();
+		if (header.isTransactional()) {
+
+			List<MessageResource> messageResources = body.getMessage().getBody().getMessageResources();
+
+			// inicia uma transação
+			Integer transactionKey = transactionManager.createNewTransaction();
+			Transaction transaction = transactionManager.getTransaction(transactionKey);
+
+			Boolean startTransaction = transaction.startTransaction(messageResources);
+			if (startTransaction) {
+				Boolean voteRequestForAll = transaction.voteRequestForAll(messageResources);
+				if (voteRequestForAll) {
+					Boolean globalCommitForAll = transaction.globalCommitForAll(messageResources);
+					if (globalCommitForAll) {
+						// passou por todas as fases
+						requestPacket.getPacketHeader().setOperation("dequeue");
+						crh.send(marshaller.marshall((Object) requestPacket));
+						unmarshalledReplyPacket = crh.receive();
+						
+						marshalledReplyPacket.setReply("sucesso");
+					} else {
+
+					}
+				} else {
+
+				}
+			} else {
+
+			}
+		} else {
+
+		}
 
 		return marshalledReplyPacket.getReply(); // TODO
 	}

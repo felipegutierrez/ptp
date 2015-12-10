@@ -36,7 +36,7 @@ public class Publisher {
 				"escrevendo 000000", ResourcePermissions.READ_AND_WRITE);
 		messageResources.add(messageFile);
 		messageFile = new MessageResource(new File("/home/felipe/Temp/teste11.txt"), "escrevendo 111111",
-				ResourcePermissions.READ_AND_WRITE, true);
+				ResourcePermissions.READ_AND_WRITE);
 		messageResources.add(messageFile);
 		messageFile = new MessageResource(new File("/home/felipe/Temp/teste22.txt"), "escrevendo 222222",
 				ResourcePermissions.READ_AND_WRITE);

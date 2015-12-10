@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import infrastructure.ServerRequestHandler;
@@ -63,37 +62,10 @@ public class QueueManager {
 					Message messageReceived = queues.get(queueName).getMessage();
 					if (messageReceived.getHead().isTransactional()) {
 
-						Integer transactionKey = transactionManager.createNewTransaction();
-						Transaction transaction = transactionManager.getTransaction(transactionKey);
-						List<MessageResource> messageResources = messageReceived.getBody().getMessageResources();
+						replyPacketUnmarshalled.setHeader(new ReplyPacketHeader("write", true));
+						replyPacketUnmarshalled.setBody(new ReplyPacketBody(null, messageReceived));
+						replyPacketUnmarshalled.setReply("executando");
 
-						// analisa o header para verificar se pode realizar o dequeue
-
-						Boolean startTransaction = transactionManager.startTransaction(transactionKey, messageResources);
-						if (startTransaction) {
-
-							Boolean voteRequestForAll = transactionManager.voteRequestForAll(transactionKey, messageResources);
-							if (voteRequestForAll) {
-								// se recebeu VOTE_COMMIT_ALL escreve GLOBAL_COMMIT
-								Boolean globalCommitForAll = transactionManager.globalCommitForAll(transactionKey, messageResources);
-								if (globalCommitForAll) {
-
-									// realiza o dequeue pois a transação foi completada com sucesso
-									String body = queues.get(queueName).dequeue().getBody().getBody();
-									replyPacketUnmarshalled.setReply(body);
-								} else {
-									// não consegui comitar para algum dos participantes
-									Boolean globalRollBackForAll = transactionManager.globalRollBackForAll(transactionKey, messageResources);
-									replyPacketUnmarshalled.setReply("erro no globalCommitForAll da transação " + transaction);
-								}
-							} else {
-								// não conseguiu fazer o request para algum dos participantes
-								replyPacketUnmarshalled.setReply("erro no voteRequestForAll da transação " + transaction);
-							}
-						} else {
-							// não conseguiu iniciar a transação
-							replyPacketUnmarshalled.setReply("erro no start da transação " + transaction);
-						}
 					} else {
 						// a mensagem não é transacional
 						String body = queues.get(queueName).dequeue().getBody().getBody();
@@ -105,6 +77,17 @@ public class QueueManager {
 
 				replyPacketMarshalled = marshaller.marshall((Object) replyPacketUnmarshalled); // TODO
 				srh.send(replyPacketMarshalled);
+				break;
+
+			// tira da fila
+			case "dequeue":
+				queueName = new String(requestPacketMarshalled.getPacketBody().getMessage().getHead().getDestination());
+				if (queues.containsKey(queueName) && queues.get(queueName).queueSize() > 0) {
+					String body = queues.get(queueName).dequeue().getBody().getBody();
+					replyPacketUnmarshalled.setReply(body);
+					replyPacketMarshalled = marshaller.marshall((Object) replyPacketUnmarshalled); // TODO
+					srh.send(replyPacketMarshalled);
+				}
 				break;
 			}
 		}
