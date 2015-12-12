@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="distribution.Transaction" project="ptp" 
     file="/ptp/src/distribution/Transaction.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="155" y="372"/>    
+    <position height="-1" width="-1" x="172" y="293"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="distribution.TransactionManager" project="ptp" 
     file="/ptp/src/distribution/TransactionManager.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="591" y="118"/>    
+    <position height="-1" width="-1" x="594" y="164"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="distribution.Resource" project="ptp" file="/ptp/src/distribution/Resource.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="154" y="672"/>    
+    <position height="-1" width="-1" x="167" y="556"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,16 +30,16 @@
   </class>  
   <class id="4" language="java" name="distribution.ResourceManager" project="ptp" 
     file="/ptp/src/distribution/ResourceManager.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="622" y="387"/>    
+    <position height="-1" width="-1" x="625" y="404"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="distribution.QueueManager" project="ptp" 
-    file="/ptp/src/distribution/QueueManager.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="87" y="120"/>    
+  <class id="5" language="java" name="distribution.QueueManagerProxy" project="ptp" 
+    file="/ptp/src/distribution/QueueManagerProxy.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="163" y="86"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -47,33 +47,45 @@
     </display>  
   </class>  
   <association id="6">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="7" name="transactionManager"/>      
-      <multiplicity id="8" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="9">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="10" name="resources"/>      
-      <multiplicity id="11" minimum="0" maximum="2147483647"/>    
+      <attribute id="7" name="resources">        
+        <position height="0" width="0" x="13" y="-116"/>      
+      </attribute>      
+      <multiplicity id="8" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="13" y="-116"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="12">    
+  <association id="9">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="13" name="resourceManager"/>      
-      <multiplicity id="14" minimum="0" maximum="1"/>    
+      <attribute id="10" name="resourceManager">        
+        <position height="0" width="0" x="3" y="17"/>      
+      </attribute>      
+      <multiplicity id="11" minimum="0" maximum="1">        
+        <position height="0" width="0" x="3" y="17"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <association id="12">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="13" name="transactionManager"/>      
+      <multiplicity id="14" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="15">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="16" name="transactions"/>      
-      <multiplicity id="17" minimum="0" maximum="2147483647"/>    
+      <attribute id="16" name="transactions">        
+        <position height="0" width="0" x="17" y="-79"/>      
+      </attribute>      
+      <multiplicity id="17" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="17" y="-79"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
