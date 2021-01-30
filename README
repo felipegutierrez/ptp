@@ -25,3 +25,5 @@ Thus it is possible to verify that one of the resources is unavailable and the 2
 3 - Create again the file excluded. Thus it is possible to test the trasaction until it completes.
 # touch /home/felipe/Temp/2FC/teste11.txt
 
+
+Codacy Badge
